@@ -21,7 +21,7 @@ jobs:
           pip install pytest
 
       - name: Run tests
-        run: pytest -v
+        run: pytest tests/ -v
 
       - name: Validate Docker build
         run: |
@@ -35,5 +35,3 @@ jobs:
         with:
           name: hello-7511
           path: hello-7511.txt
-
-  # We'll add the deploy job later after this works
