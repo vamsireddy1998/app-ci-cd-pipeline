@@ -6,19 +6,34 @@ on:
     branches: [ "main" ]
 
 jobs:
-  warmup:
+  build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Print SHA and create artifact
-        run: |
-          echo "Git SHA: $GITHUB_SHA"
-          echo "Run ID: $GITHUB_RUN_ID" > hello-7511.txt
-          cat hello-7511.txt
 
-      - name: Upload warmup artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run tests
+        run: pytest -v
+
+      - name: Validate Docker build
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          docker build -t app:${SHA}-7511 .
+
+      - name: Warmup artifact
+        run: echo "run $GITHUB_RUN_ID" > hello-7511.txt
+
+      - uses: actions/upload-artifact@v4
         with:
           name: hello-7511
           path: hello-7511.txt
+
+  # We'll add the deploy job later after this works
