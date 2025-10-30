@@ -1,0 +1,24 @@
+name: app-ci-cd
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  warmup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Print SHA and create artifact
+        run: |
+          echo "Git SHA: $GITHUB_SHA"
+          echo "Run ID: $GITHUB_RUN_ID" > hello-7511.txt
+          cat hello-7511.txt
+
+      - name: Upload warmup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-7511
+          path: hello-7511.txt
